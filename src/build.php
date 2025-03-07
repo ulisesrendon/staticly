@@ -29,10 +29,15 @@ try {
             return false;
         } elseif ($extension === 'md') {
             file_put_contents('php://output', "Processing MD file: $sourceFile".PHP_EOL);
-            
+
             $destinyPathInfo = pathinfo($destinyFile);
-            $markDownContent = (new Parsedown)->text(file_get_contents($sourceFile));
-            new FileCreator("{$destinyPathInfo['dirname']}/{$destinyPathInfo['filename']}.html")->putContents($markDownContent);
+            try{
+                $markDownContent = (new Parsedown)->text(file_get_contents($sourceFile));
+                new FileCreator("{$destinyPathInfo['dirname']}/{$destinyPathInfo['filename']}.html")->putContents($markDownContent);
+            }catch(\Exception $e){
+                file_put_contents('php://output', "Error: {$e->getMessage()}".PHP_EOL);
+                exit();
+            }
 
             return false;
         }
@@ -40,7 +45,7 @@ try {
         return true;
     });
 
-    echo "Files copied successfully.\n";
+    file_put_contents('php://output', "Files rendered successfully" . PHP_EOL);
 } catch (Exception $e) {
-    echo 'Error: '.$e->getMessage()."\n";
+    file_put_contents('php://output', "Error: {$e->getMessage()}" . PHP_EOL);
 }
