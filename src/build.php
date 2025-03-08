@@ -8,7 +8,7 @@ use Neuralpin\File\TemplateRender;
 require __DIR__.'/../vendor/autoload.php';
 
 $sourceDir = __DIR__.'/../content';
-$destinyDir = __DIR__.'/../dist';
+$destinyDir = __DIR__.'/../public';
 
 if (is_dir($destinyDir)) {
     try {
