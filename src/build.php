@@ -1,9 +1,9 @@
 <?php
 
+use Neuralpin\File\DirectoryCleaner;
 use Neuralpin\File\FileCopier;
 use Neuralpin\File\FileCreator;
 use Neuralpin\File\TemplateRender;
-use Neuralpin\File\DirectoryCleaner;
 
 require __DIR__.'/../vendor/autoload.php';
 
@@ -29,13 +29,13 @@ try {
 
             // [TODO]
             new TemplateRender($sourceFile);
-            
+
             return false;
         } elseif ($extension === 'md') {
             file_put_contents('php://output', "Processing MD file: $sourceFile".PHP_EOL);
 
             $destinyPathInfo = pathinfo($destinyFile);
-            $markDownContent = (new Parsedown)->text(file_get_contents($sourceFile));
+            $markDownContent = new Parsedown()->text(file_get_contents($sourceFile));
             new FileCreator("{$destinyPathInfo['dirname']}/{$destinyPathInfo['filename']}.html")->putContents($markDownContent);
 
             return false;
@@ -44,7 +44,7 @@ try {
         return true;
     });
 
-    file_put_contents('php://output', "Files rendered successfully" . PHP_EOL);
+    file_put_contents('php://output', 'Files rendered successfully'.PHP_EOL);
 } catch (Exception $e) {
-    file_put_contents('php://output', "Error: {$e->getMessage()}" . PHP_EOL);
+    file_put_contents('php://output', "Error: {$e->getMessage()}".PHP_EOL);
 }

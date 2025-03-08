@@ -1,4 +1,5 @@
 <?php
+
 namespace Neuralpin\File;
 
 use Exception;
@@ -10,7 +11,7 @@ class TemplateRender implements Stringable
         public string $filepath,
         public array $context = []
     ) {
-        if (!file_exists($this->filepath)) {
+        if (! file_exists($this->filepath)) {
             throw new Exception("File not found: {$this->filepath}");
         }
     }
