@@ -7,13 +7,13 @@ use Neuralpin\File\TemplateRender;
 
 require __DIR__.'/../vendor/autoload.php';
 
-$sourceDir = __DIR__.'/base';
+$sourceDir = __DIR__.'/../content';
 $destinyDir = __DIR__.'/../dist';
 
 if (is_dir($destinyDir)) {
     try {
         new DirectoryCleaner($destinyDir)->deleteFiles();
-        file_put_contents('php://output', 'Cleaning output static dir...'.PHP_EOL);
+        file_put_contents('php://output', 'Cleaning output dir...'.PHP_EOL);
     } catch (\Exception $e) {
         file_put_contents('php://output', 'Error trying to clean dir'.PHP_EOL);
         exit();
@@ -26,18 +26,17 @@ try {
         $extension = pathinfo($sourceFile, PATHINFO_EXTENSION);
         if ($extension === 'php') {
             file_put_contents('php://output', "Processing PHP file: $sourceFile".PHP_EOL);
-
-            // [TODO]
-            new TemplateRender($sourceFile);
-
-            return false;
+            $renderedContent = new TemplateRender($sourceFile)->render();
         } elseif ($extension === 'md') {
             file_put_contents('php://output', "Processing MD file: $sourceFile".PHP_EOL);
+            $renderedContent = new Parsedown()->text(file_get_contents($sourceFile));
+        }
 
+        if ($extension === 'php' || $extension === 'md') {
             $destinyPathInfo = pathinfo($destinyFile);
-            $markDownContent = new Parsedown()->text(file_get_contents($sourceFile));
-            new FileCreator("{$destinyPathInfo['dirname']}/{$destinyPathInfo['filename']}.html")->putContents($markDownContent);
-
+            new FileCreator("{$destinyPathInfo['dirname']}/{$destinyPathInfo['filename']}.html")->putContents($renderedContent);
+            return false;
+        }else if($extension === 'gitkeep'){
             return false;
         }
 
