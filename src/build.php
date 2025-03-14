@@ -4,36 +4,53 @@ use Neuralpin\File\DirectoryCleaner;
 use Neuralpin\File\FileCopier;
 use Neuralpin\File\FileCreator;
 use Neuralpin\File\TemplateRender;
+use function Neuralpin\consoleLog;
+use function Neuralpin\extractMainTitle;
 
 require __DIR__.'/../vendor/autoload.php';
 
-$sourceDir = __DIR__.'/../content';
-$destinyDir = __DIR__.'/../public';
+define('CONFIG', (array) require __DIR__.'/config.php');
 
-if (is_dir($destinyDir)) {
+if (is_dir(CONFIG['destinyDir'])) {
     try {
-        new DirectoryCleaner($destinyDir)->deleteFiles();
-        file_put_contents('php://output', 'Cleaning output dir...'.PHP_EOL);
+        new DirectoryCleaner(CONFIG['destinyDir'])->deleteFiles();
+        consoleLog('Cleaning output dir...');
     } catch (\Exception $e) {
-        file_put_contents('php://output', 'Error trying to clean dir'.PHP_EOL);
+        consoleLog('Error trying to clean dir');
         exit();
     }
 }
 
 try {
-    $Copier = new FileCopier($sourceDir, $destinyDir);
-    $Copier->copyFiles(function ($sourceFile, $destinyFile) {
+    $Copier = new FileCopier(CONFIG['sourceDir'], CONFIG['destinyDir']);
+    $Copier->copyFiles(function ($sourceFile, $destinyFile)  {
         $extension = pathinfo($sourceFile, PATHINFO_EXTENSION);
+        $destinyPathInfo = pathinfo($destinyFile);
+
+        $title = '';
+
         if ($extension === 'php') {
-            file_put_contents('php://output', "Processing PHP file: $sourceFile".PHP_EOL);
+            consoleLog( "Processing PHP file: $sourceFile");
             $renderedContent = new TemplateRender($sourceFile)->render();
         } elseif ($extension === 'md') {
-            file_put_contents('php://output', "Processing MD file: $sourceFile".PHP_EOL);
-            $renderedContent = new Parsedown()->text(file_get_contents($sourceFile));
+            consoleLog( "Processing MD file: $sourceFile");
+            $markdownContent =  file_get_contents($sourceFile);
+            $renderedContent = new Parsedown()->text($markdownContent);
+            $title = extractMainTitle($markdownContent);
+        }
+
+        if (strpos($destinyPathInfo['filename'], '__') !== false) {
+            $template = CONFIG['templates'][explode('__', $destinyPathInfo['filename'])[1]] ?? CONFIG['templates']['page'];
+
+            $renderedContent = new TemplateRender($template, [
+                'title' => $title,
+                'content' => $renderedContent,
+            ])->render();
+
+            $destinyPathInfo['filename'] = preg_replace('/__([a-zA-Z0-9]+)/', '', $destinyPathInfo['filename']);
         }
 
         if ($extension === 'php' || $extension === 'md') {
-            $destinyPathInfo = pathinfo($destinyFile);
             new FileCreator("{$destinyPathInfo['dirname']}/{$destinyPathInfo['filename']}.html")->putContents($renderedContent);
             return false;
         }else if($extension === 'gitkeep'){
@@ -43,7 +60,7 @@ try {
         return true;
     });
 
-    file_put_contents('php://output', 'Files rendered successfully'.PHP_EOL);
+    consoleLog( 'Files rendered successfully');
 } catch (Exception $e) {
-    file_put_contents('php://output', "Error: {$e->getMessage()}".PHP_EOL);
+    consoleLog( "Error: {$e->getMessage()}");
 }

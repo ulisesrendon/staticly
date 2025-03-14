@@ -13,9 +13,13 @@
     "autoload": {
         "psr-4": {
             "Neuralpin\\": "src/"
-        }
+        },
+        "files": [
+            "src/functions.php"
+        ]
     },
     "require-dev": {
+        "php": "^8.4",
         "laravel/pint": "dev-main",
         "phpunit/phpunit": "^12.0@dev",
         "phpstan/phpstan": "2.1.x-dev",
