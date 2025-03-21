@@ -29,10 +29,11 @@ try {
 
         $title = '';
 
+        consoleLog($sourceFile);
         if ($extension === 'php') {
             consoleLog( "Processing PHP file: $sourceFile");
             $renderedContent = new TemplateRender($sourceFile)->render();
-        } elseif ($extension === 'md') {
+        } else if ($extension === 'md') {
             consoleLog( "Processing MD file: $sourceFile");
             $markdownContent =  file_get_contents($sourceFile);
             $renderedContent = new Parsedown()->text($markdownContent);
