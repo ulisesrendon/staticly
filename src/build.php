@@ -36,10 +36,8 @@ try {
         $renderedContent = '';
 
         if ($extension === 'php') {
-            consoleLog( "Processing PHP file: $sourceFile");
             $renderedContent = new TemplateRender($sourceFile)->render();
         } elseif ($extension === 'md') {
-            consoleLog( "Processing MD file: $sourceFile");
             $markdownContent = (string) file_get_contents($sourceFile);
             $renderedContent = new Parsedown()->text($markdownContent);
             $title = extractMainTitle($markdownContent);
@@ -59,7 +57,7 @@ try {
         if ($extension === 'php' || $extension === 'md') {
             new FileCreator("{$dirname}/{$filename}.html")->putContents($renderedContent);
             return false;
-        }else if($extension === 'gitkeep'){
+        }else if(in_array($extension, CONFIG['ignoreExtensions'])){
             return false;
         }
 

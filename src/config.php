@@ -7,4 +7,9 @@ return [
         'article' => __DIR__.'/../templates/article.php',
         'page' => __DIR__.'/../templates/page.php',
     ],
+    'ignoreExtensions' => [
+        'gitkeep',
+        'draft',
+        'content',
+    ],
 ];
