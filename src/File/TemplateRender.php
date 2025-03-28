@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neuralpin\File;
 
 use Exception;
@@ -7,6 +9,11 @@ use Stringable;
 
 class TemplateRender implements Stringable
 {
+    /**
+     * @param string $filepath
+     * @param mixed[] $context
+     * @throws \Exception
+     */
     public function __construct(
         public string $filepath,
         public array $context = []
@@ -16,7 +23,7 @@ class TemplateRender implements Stringable
         }
     }
 
-    public function render()
+    public function render(): bool|string
     {
         ob_start();
         extract($this->context);

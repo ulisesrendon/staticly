@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neuralpin\File;
 
 use Exception;
@@ -16,7 +18,7 @@ class FileCopier
         $this->destinyDir = rtrim($destinyDir, '/\\').DIRECTORY_SEPARATOR;
     }
 
-    public function copyFiles(?callable $callback = null)
+    public function copyFiles(?callable $callback = null): void
     {
         if (! is_dir($this->sourceDir)) {
             throw new Exception("Source directory does not exist: {$this->sourceDir}");
@@ -31,7 +33,7 @@ class FileCopier
         $this->copyDirectory($this->sourceDir, $this->destinyDir, $callback);
     }
 
-    private function copyDirectory(string $source, string $target, ?callable $callback = null)
+    private function copyDirectory(string $source, string $target, ?callable $callback = null): void
     {
         $files = scandir($source);
         foreach ($files as $file) {
@@ -48,7 +50,7 @@ class FileCopier
                 }
                 $this->copyDirectory($src.DIRECTORY_SEPARATOR, $dst.DIRECTORY_SEPARATOR);
             } else {
-                if ($callback === null || call_user_func($callback, $src, $dst)) { // Check callback
+                if ($callback === null || call_user_func($callback, $src, $dst)) {
                     if (! copy($src, $dst)) {
                         throw new Exception('Failed to copy file: '.$file);
                     }

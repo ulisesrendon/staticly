@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neuralpin\File;
 
 use Exception;
@@ -13,7 +15,7 @@ class DirectoryCleaner
         $this->directory = rtrim($directory, '/\\').DIRECTORY_SEPARATOR;
     }
 
-    public function deleteFiles()
+    public function deleteFiles(): void
     {
         if (! is_dir($this->directory)) {
             throw new Exception("Directory does not exist: {$this->directory}");
@@ -36,21 +38,21 @@ class DirectoryCleaner
         }
     }
 
-    private function deleteDirectory($dir)
+    private function deleteDirectory(string $directory): void
     {
-        $files = scandir($dir);
+        $files = scandir($directory);
         foreach ($files as $file) {
             if ($file === '.' || $file === '..') {
                 continue;
             }
 
-            $filePath = $dir.DIRECTORY_SEPARATOR.$file;
+            $filePath = $directory.DIRECTORY_SEPARATOR.$file;
             if (is_file($filePath)) {
                 unlink($filePath);
             } elseif (is_dir($filePath)) {
                 $this->deleteDirectory($filePath);
             }
         }
-        rmdir($dir);
+        rmdir($directory);
     }
 }

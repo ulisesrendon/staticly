@@ -26,10 +26,14 @@
         "symfony/var-dumper": "7.3.x-dev"
     },
     "scripts": {
-        "analyze": "vendor/bin/phpstan analyse src",
+        "analyze": "vendor/bin/phpstan analyse -l 9 src",
         "test": "vendor/bin/phpunit --bootstrap vendor/autoload.php test",
         "fixstyle": "./vendor/bin/pint",
-        "render": "@php src/build.php"
+        "render": "@php src/build.php",
+        "serve": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php -S localhost:8000 -t public/"
+        ]
     },
     "require": {
         "erusev/parsedown": "dev-master"
