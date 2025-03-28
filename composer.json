@@ -19,7 +19,6 @@
         ]
     },
     "require-dev": {
-        "php": "^8.4",
         "laravel/pint": "dev-main",
         "phpunit/phpunit": "^12.0@dev",
         "phpstan/phpstan": "2.1.x-dev",
@@ -36,6 +35,7 @@
         ]
     },
     "require": {
+        "php": "^8.4",
         "erusev/parsedown": "dev-master"
     }
 }

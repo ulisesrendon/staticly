@@ -7,6 +7,7 @@
     <title><?php echo $title; ?></title>
     <link rel="stylesheet" href="theme/css/bootstrap.min.css">
     <link rel="stylesheet" href="theme/css/main.css">
+    <link rel="stylesheet" href="theme/css/highlight.css">
 </head>
 
 <body>
