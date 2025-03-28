@@ -10,8 +10,8 @@ use Stringable;
 class TemplateRender implements Stringable
 {
     /**
-     * @param string $filepath
-     * @param mixed[] $context
+     * @param  mixed[]  $context
+     *
      * @throws \Exception
      */
     public function __construct(
